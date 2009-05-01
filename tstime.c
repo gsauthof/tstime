@@ -14,10 +14,12 @@
 #include <linux/genetlink.h>
 #include <linux/taskstats.h>
 
+static char message[1024];
+
 int print_time_mem(struct taskstats *t)
 {
   time_t btime = t->ac_btime;
-  printf("\npid: %u (%s) started: %s"
+  snprintf(message, 1024, "\npid: %u (%s) started: %s"
       "\treal %7.3f s, user %7.3f s, sys %7.3fs\n"
       "\trss %8llu kb, vm %8llu kb\n\n",
       t->ac_pid, t->ac_comm, ctime(&btime),
@@ -50,18 +52,22 @@ void install_chld_handler()
   int r = sigaction(SIGCHLD, &sa,  0); CHECK_ERR(r);
 }
 
-void wait_for_child(pid_t pid)
+int wait_for_child(pid_t pid)
 {
+  int code = 42;
   int status;
   pid_t r = waitpid(pid, &status, 0); CHECK_ERR(r);
-  if (WIFEXITED(status))
+  if (WIFEXITED(status)) {
     fprintf(stderr, "Exit status: %d\t", WEXITSTATUS(status));
+    code = WEXITSTATUS(status);
+  }
   if (WIFSIGNALED(status))
     fprintf(stderr, "Signal: %d\t", WTERMSIG(status));
   // _BSD_SOURCE
   //if (WCOREDUMP(status))
   //  fprintf(stderr, "coredumped");
   fprintf(stderr, "\n");
+  return code;
 }
 
 void help(char *s)
@@ -74,6 +80,7 @@ void help(char *s)
 
 int main(int argc, char **argv)
 {
+  message[0] = 0;
   if (argc == 1) {
     help(argv[0]);
     return 1;
@@ -84,7 +91,6 @@ int main(int argc, char **argv)
   }
   int start_arg = 1;
   dbg = 0;
-  //rcvbufsz = 0;
 
   int r = 0;
   struct ts_t t;
@@ -102,11 +108,9 @@ int main(int argc, char **argv)
 
   pid_t pid = fork(); CHECK_ERR(pid);
   if (!pid) {
-    int r = execvp(argv[start_arg], argv+start_arg); CHECK_ERR(r);
-    return 0;
-    malloc(10 * 1024 * 1024);
-    sleep(2);
-    return 0;
+    execvp(argv[start_arg], argv+start_arg);
+    perror("execvp failed");
+    return 23;
   }
   //pause();
   //r = ts_set_pid(&t, pid); CHECK_ERR(r);
@@ -114,10 +118,12 @@ int main(int argc, char **argv)
   r = ts_wait(&t, pid, print_time_mem); CHECK_ERR(r);
   //r = ts_wait(&t, 0, print_time_mem); CHECK_ERR(r);
 
-  wait_for_child(pid);
-
+  r = wait_for_child(pid);
+  if (r != 23) {
+    fprintf(stderr, "%s", message);
+  }
 
   ts_finish(&t);
-  return 0;
+  return r;
 }
 
