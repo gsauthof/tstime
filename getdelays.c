@@ -50,7 +50,7 @@ int dbg;
 int print_delays;
 int print_io_accounting;
 int print_task_context_switch_counts;
-__u64 stime, utime;
+//__u64 stime, utime;
 
 #define PRINTF(fmt, arg...) {			\
 	    if (dbg) {				\
@@ -190,8 +190,11 @@ int get_family_id(int sd)
 	return id;
 }
 
+#include <time.h>
+
 void print_delayacct(struct taskstats *t)
 {
+  /*
 	printf("\n\nCPU   %15s%15s%15s%15s\n"
 	       "      %15llu%15llu%15llu%15llu\n"
 	       "IO    %15s%15s\n"
@@ -214,6 +217,19 @@ void print_delayacct(struct taskstats *t)
 	       "count", "delay total",
 	       (unsigned long long)t->freepages_count,
 	       (unsigned long long)t->freepages_delay_total);
+               */
+
+        time_t btime = t->ac_btime;
+        printf("\npid: %u (%s ppid: %u) started: %s\trss: %15llu kb vm: %15llu kb \n"
+            "\telapsed: %8.3f s user: %8.3f s sys: %8.3f s\n",
+            t->ac_pid, t->ac_comm, t->ac_ppid, ctime(&btime),
+            (unsigned long long) t->hiwater_rss,
+            (unsigned long long) t->hiwater_vm,
+            t->ac_etime / 1000000.0,
+            t->ac_utime / 1000000.0,
+            t->ac_stime / 1000000.0
+
+            );
 }
 
 void task_context_switch_counts(struct taskstats *t)
@@ -437,7 +453,7 @@ int main(int argc, char *argv[])
 					case TASKSTATS_TYPE_PID:
 						rtid = *(int *) NLA_DATA(na);
 						if (print_delays)
-							printf("PID\t%d\n", rtid);
+							; //printf("PID\t%d\n", rtid);
 						break;
 					case TASKSTATS_TYPE_TGID:
 						rtid = *(int *) NLA_DATA(na);
