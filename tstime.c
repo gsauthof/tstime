@@ -1,4 +1,5 @@
 #include "taskstat.h"
+#include "tools.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,18 +19,7 @@ static char message[1024];
 
 int print_time_mem(struct taskstats *t)
 {
-  time_t btime = t->ac_btime;
-  snprintf(message, 1024, "\npid: %u (%s) started: %s"
-      "\treal %7.3f s, user %7.3f s, sys %7.3fs\n"
-      "\trss %8llu kb, vm %8llu kb\n\n",
-      t->ac_pid, t->ac_comm, ctime(&btime),
-      t->ac_etime / 1000000.0,
-      t->ac_utime / 1000000.0,
-      t->ac_stime / 1000000.0,
-      (unsigned long long) t->hiwater_rss,
-      (unsigned long long) t->hiwater_vm
-
-      );
+  pp_taskstats(message, 1024, t);
   return 0;
 }
 
@@ -54,6 +44,7 @@ void install_chld_handler()
 
 int wait_for_child(pid_t pid)
 {
+  fprintf(stderr, "\n");
   int code = 42;
   int status;
   pid_t r = waitpid(pid, &status, 0); CHECK_ERR(r);
@@ -100,9 +91,7 @@ int main(int argc, char **argv)
 
  
   char cpumask[100];
-  int cpus = sysconf(_SC_NPROCESSORS_CONF);
-  snprintf(cpumask, 100, "0-%d", cpus);
-  PRINTF("#CPUS: %d\n", cpus);
+  gen_cpumask(cpumask, 100);
   r = ts_set_cpus(&t, cpumask); CHECK_ERR(r);
 
 
