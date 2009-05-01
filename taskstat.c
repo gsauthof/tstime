@@ -1,3 +1,19 @@
+/*
+ * taskstat.c
+ *
+ * GPL 2+
+ *
+ * Georg Sauthoff 2009
+ *
+ * copy pasted needed stuff to do the taskstats delay accounting communication
+ * from the getdelays.c, which is an example distributed with the Linux Kernel
+ *
+ * added the ts_* wrapper to make a change to a libnl 'backend' easy
+ *
+ * so far failed to use libnl in a proper way (see nl.c for a try)
+ *
+ */
+
 /* getdelays.c
  *
  * Utility to get per-pid and per-tgid delay accounting statistics
@@ -46,12 +62,6 @@ int dbg;
 		exit(code);			\
 	} while (0)
 
-
-#define PRINTF(fmt, arg...) {			\
-	    if (dbg) {				\
-		printf(fmt, ##arg);		\
-	    }					\
-	}
 
 /* Maximum size of response requested or message sent */
 #define MAX_MSG_SIZE	1024
@@ -320,7 +330,7 @@ done:
     int rc = send_cmd(nl_sd, id, mypid, TASKSTATS_CMD_GET,
         TASKSTATS_CMD_ATTR_DEREGISTER_CPUMASK,
         cpumask, strlen(cpumask) + 1);
-    printf("Sent deregister mask, retval %d\n", rc);
+    PRINTF("Sent deregister mask, retval %d\n", rc);
     if (rc < 0)
       err(rc, "error sending deregister cpumask\n");
   }

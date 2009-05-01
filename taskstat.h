@@ -7,6 +7,11 @@
 struct taskstats;
 
 extern int dbg;
+#define PRINTF(fmt, arg...) {			\
+	    if (dbg) {				\
+		printf(fmt, ##arg);		\
+	    }					\
+	}
 
 struct ts_t {
   int nl_sd;

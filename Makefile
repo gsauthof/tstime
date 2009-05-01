@@ -3,4 +3,4 @@
 tstime: tstime.o taskstat.o
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
-tstime.c taskstat.c: taskstat.h
+tstime.o taskstat.o tstime.c taskstat.c: taskstat.h

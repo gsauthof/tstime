@@ -17,20 +17,26 @@
 int print_time_mem(struct taskstats *t)
 {
   time_t btime = t->ac_btime;
-  printf("\npid: %u (%s ppid: %u) started: %s\trss: %15llu kb vm: %15llu kb \n"
-      "\telapsed: %8.3f s user: %8.3f s sys: %8.3f s\n",
-      t->ac_pid, t->ac_comm, t->ac_ppid, ctime(&btime),
-      (unsigned long long) t->hiwater_rss,
-      (unsigned long long) t->hiwater_vm,
+  printf("\npid: %u (%s) started: %s"
+      "\treal %7.3f s, user %7.3f s, sys %7.3fs\n"
+      "\trss %8llu kb, vm %8llu kb\n\n",
+      t->ac_pid, t->ac_comm, ctime(&btime),
       t->ac_etime / 1000000.0,
       t->ac_utime / 1000000.0,
-      t->ac_stime / 1000000.0
+      t->ac_stime / 1000000.0,
+      (unsigned long long) t->hiwater_rss,
+      (unsigned long long) t->hiwater_vm
 
       );
   return 0;
 }
 
-#define CHECK_ERR(a) if (a<0) { assert(0); exit(23); }
+#define CHECK_ERR(a) \
+  if (a<0) { \
+    fprintf(stderr, "%s:%d ", __FILE__, __LINE__); \
+    perror(0); \
+    exit(23); \
+  }
 
 void child_exit(int i)
 {
@@ -58,9 +64,26 @@ void wait_for_child(pid_t pid)
   fprintf(stderr, "\n");
 }
 
+void help(char *s)
+{
+  printf("%s COMMAND OPTIONS*\n\n"
+      "\texecutes COMMAND and prints its runtime and highwater mem usage\n\n"
+      "(uses the taskstat delay accounting API of the Linux Kernel 2.6)\n",
+      s);
+}
+
 int main(int argc, char **argv)
 {
-  dbg = 1;
+  if (argc == 1) {
+    help(argv[0]);
+    return 1;
+  }
+  if (!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help")) {
+    help(argv[0]);
+    return 0;
+  }
+  int start_arg = 1;
+  dbg = 0;
   //rcvbufsz = 0;
 
   int r = 0;
@@ -73,12 +96,14 @@ int main(int argc, char **argv)
   char cpumask[100];
   int cpus = sysconf(_SC_NPROCESSORS_CONF);
   snprintf(cpumask, 100, "0-%d", cpus);
-  fprintf(stderr, "#CPUS: %d\n", cpus);
+  PRINTF("#CPUS: %d\n", cpus);
   r = ts_set_cpus(&t, cpumask); CHECK_ERR(r);
 
 
   pid_t pid = fork(); CHECK_ERR(pid);
   if (!pid) {
+    int r = execvp(argv[start_arg], argv+start_arg); CHECK_ERR(r);
+    return 0;
     malloc(10 * 1024 * 1024);
     sleep(2);
     return 0;
