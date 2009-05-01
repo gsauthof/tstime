@@ -25,6 +25,6 @@ void pp_taskstats(char *message, size_t len, struct taskstats *t)
 
 void gen_cpumask(char *cpumask, size_t len)
 {
-  int cpus = sysconf(_SC_NPROCESSORS_CONF);
+  int cpus = sysconf(_SC_NPROCESSORS_CONF) - 1;
   snprintf(cpumask, len, "0-%d", cpus);
 }
