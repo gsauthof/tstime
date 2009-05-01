@@ -11,7 +11,7 @@ Repository contains 2 programs:
 - tstime
   
   'time(1)'-like command - but in addition to the runtime it also
-  prints the highwater memory usage of the controlled process
+  prints the highwater memory usage (rss+vmem) of the controlled process
 
 - tsmon
 
@@ -28,7 +28,7 @@ information under Linux (situation is similair on Solaris).
 
 There are different approaches to solve this problem:
 
-1. For rss highwater just use the ru_maxrss field from struct rusage (see
+1. For rss-only highwater just use the ru_maxrss field from struct rusage (see
    getrusage(2) or wait3(2)). Unfortunetely  POSIX does not specify it
    and currently (2.6.27) Linux does not write this field
    (Solaris does not, too; AIX, BSD are reported to write this information)
@@ -44,6 +44,12 @@ There are different approaches to solve this problem:
    (and ignore it) until the watched process exits.
 
    see tstime.c for details
+
+   nl.c contains a try to use libnl for communicating with the taskstats
+   delay accounting subsystem of the kernel - but it does not work.
+   Patches/hints how to correctly use libnl are appreciated.
+   Thus, taskstat.c uses the low-level code from getdelays.c from
+   the kernel documentation.
 
 About 1:
 
