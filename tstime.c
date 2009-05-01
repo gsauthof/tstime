@@ -1,3 +1,7 @@
+/*
+ * Copyright Georg Sauthoff 2009, GPLv2+
+ */
+
 #include "taskstat.h"
 #include "tools.h"
 
@@ -22,13 +26,6 @@ int print_time_mem(struct taskstats *t)
   pp_taskstats(message, 1024, t);
   return 0;
 }
-
-#define CHECK_ERR(a) \
-  if (a<0) { \
-    fprintf(stderr, "%s:%d ", __FILE__, __LINE__); \
-    perror(0); \
-    exit(23); \
-  }
 
 void child_exit(int i)
 {

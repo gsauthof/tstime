@@ -1,0 +1,61 @@
+I appreciate feedback and comments (specially about changing APIs which are
+related to the programs):
+
+gsauthof@techfak.uni-bielefeld.de
+gsauthof@sdf.lonestar.org
+
+License of the source code is the GPL version 2 or later.
+If you don't received the licence text go to: http://www.gnu.org/licenses/
+
+Repository contains 2 programs:
+- tstime
+  
+  'time(1)'-like command - but in addition to the runtime it also
+  prints the highwater memory usage of the controlled process
+
+- tsmon
+
+  prints the runtime/highwater memory usage of every process which is
+  exiting on the system until the tsmon is quit
+
+Warning: The usage of tsmon is dangerous. Suddenly, you know for example that
+'psi' consumes 32 MB rss, 'bash' forks 5 processes for each time you hit TAB
+or that hald does a lot of forking from time to time.
+
+
+Suprisingly, it is difficult to get the highwater memory usage
+information under Linux (situation is similair on Solaris).
+
+There are different approaches to solve this problem:
+
+1. For rss highwater just use the ru_maxrss field from struct rusage (see
+   getrusage(2) or wait3(2)). Unfortunetely  POSIX does not specify it
+   and currently (2.6.27) Linux does not write this field
+   (Solaris does not, too; AIX, BSD are reported to write this information)
+
+2. Sample from /proc during the lifetime of the watched process. Yes, this is
+   polling. The old tool 'memtime' does this. Of course, this approach is ultra
+   ugly and not suitable for short running processes.
+
+3. Use the taskstat delay accounting API from the Linux 2.6 Kernel.
+   For tsmon this is a perfect fit. But to get the taskstats information
+   of a single exiting process there is a bit overhead involved:
+   you have to retrieve the exit information of all exiting processes
+   (and ignore it) until the watched process exits.
+
+   see tstime.c for details
+
+About 1:
+
+From time to time patches are sent to the lkml to support ru_maxrss.
+AFAIK, until now nothing got applied.
+
+The last patch is discussed in
+http://thread.gmane.org/gmane.linux.kernel.mm/29880/focus=32531
+http://thread.gmane.org/gmane.linux.kernel.api/449
+
+
+Previous patches:
+http://thread.gmane.org/gmane.linux.kernel/582381
+http://thread.gmane.org/gmane.linux.kernel/568053
+
