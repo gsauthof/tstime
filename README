@@ -5,7 +5,7 @@ gsauthof@techfak.uni-bielefeld.de
 gsauthof@sdf.lonestar.org
 
 License of the source code is the GPL version 2 or later.
-If you don't received the licence text go to: http://www.gnu.org/licenses/
+If you don't received the license text go to: http://www.gnu.org/licenses/
 
 Repository contains 2 programs:
 - tstime
@@ -23,13 +23,13 @@ Warning: The usage of tsmon is dangerous. Suddenly, you know for example that
 or that hald does a lot of forking from time to time.
 
 
-Suprisingly, it is difficult to get the highwater memory usage
-information under Linux (situation is similair on Solaris).
+Surprisingly, it is difficult to get the highwater memory usage
+information under Linux (situation is similar on Solaris).
 
 There are different approaches to solve this problem:
 
 1. For rss-only highwater just use the ru_maxrss field from struct rusage (see
-   getrusage(2) or wait3(2)). Unfortunetely  POSIX does not specify it
+   getrusage(2) or wait3(2)). Unfortunately  POSIX does not specify it
    and currently (2.6.27) Linux does not write this field
    (Solaris does not, too; AIX, BSD are reported to write this information)
 
