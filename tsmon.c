@@ -4,6 +4,7 @@
 
 #include "taskstat.h"
 #include "tools.h"
+#include "version.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,8 +34,9 @@ void help(char *s)
   printf("%s\n\n"
       "\tprints taskstats (time, mem) of exiting processes/threads"
       " on the system\n\n"
-      "(uses the taskstat delay accounting API of the Linux Kernel 2.6)\n",
-      s);
+      "(uses the taskstat delay accounting API of the Linux Kernel 2.6)\n\n"
+      "Version: %s\n",
+      s, rcsid);
 }
 
 int main(int argc, char **argv)
