@@ -16,4 +16,10 @@ void gen_cpumask(char *cpumask, size_t len);
     exit(23); \
   }
 
+#define CHECK_ERR_SIMPLE(a) \
+  if (a<0) { \
+    fprintf(stderr, "%s:%d ", __FILE__, __LINE__); \
+    exit(23); \
+  }
+
 #endif

@@ -65,3 +65,26 @@ Previous patches:
 http://thread.gmane.org/gmane.linux.kernel/582381
 http://thread.gmane.org/gmane.linux.kernel/568053
 
+
+
+Compile hints:
+
+- Since the taskstat API of the linux kernel is used you obviously need to
+  have the kernel headers available.
+
+  Under a debian-style distribution they are included in the package
+  'linux-libc-dev'
+
+- Under current distributions (e.g. debian style) the default kernel is
+  configured to provide the taskstat interface.
+
+  If you get errors like 'Error getting family id, errno 0', your kernel
+  probably is not configured for taskstat.
+
+  To check your kernel config type something like this:
+
+$ grep -i taskstat /boot/config-2.6.*-*-generic 
+/boot/config-2.6.27-11-generic:CONFIG_TASKSTATS=y
+
+
+

@@ -84,7 +84,7 @@ int main(int argc, char **argv)
 
   int r = 0;
   struct ts_t t;
-  r = ts_init(&t); CHECK_ERR(r);
+  r = ts_init(&t); CHECK_ERR_SIMPLE(r);
 
   //install_chld_handler();
 
