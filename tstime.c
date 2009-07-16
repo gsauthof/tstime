@@ -8,17 +8,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <assert.h>
-#include <time.h>
 #include <unistd.h>
+#include <signal.h>
 #include <sys/wait.h>
 #include <sys/types.h>
-#include <signal.h>
-#include <string.h>
 
-#include <sys/socket.h>
-#include <linux/genetlink.h>
-#include <linux/taskstats.h>
 
 static char message[1024];
 
