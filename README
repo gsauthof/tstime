@@ -33,6 +33,17 @@ There are different approaches to solve this problem:
    and currently (2.6.27) Linux does not write this field
    (Solaris does not, too; AIX, BSD are reported to write this information)
 
+   From time to time patches are sent to the lkml to support ru_maxrss.
+   AFAIK, until now nothing got applied.
+
+   The last patch is discussed in
+   http://thread.gmane.org/gmane.linux.kernel.mm/29880/focus=32531
+   http://thread.gmane.org/gmane.linux.kernel.api/449
+
+   Previous patches:
+   http://thread.gmane.org/gmane.linux.kernel/582381
+   http://thread.gmane.org/gmane.linux.kernel/568053
+
 2. Sample from /proc during the lifetime of the watched process. Yes, this is
    polling. The old tool 'memtime' does this. Of course, this approach is ultra
    ugly and not suitable for short running processes.
@@ -45,26 +56,36 @@ There are different approaches to solve this problem:
 
    see tstime.c for details
 
+   I tried to wait for a sig-child and than use the child-pid to get
+   the accounting information via the taskstat api, which didn't work. At
+   this point the information of the child is already gone.
+
    nl.c contains a try to use libnl for communicating with the taskstats
    delay accounting subsystem of the kernel - but it does not work.
    Patches/hints how to correctly use libnl are appreciated.
    Thus, taskstat.c uses the low-level code from getdelays.c from
    the kernel documentation.
 
-About 1:
+4. Use dtrace. Under Solaris dtrace looks like an elegant way to
+   solve the problem. Unfortunately, dtrace does not provide any
+   dtrace-provider that provides the rss/vmem-highwater information
+   to the user. This is surprising since the Solaris Kernel
+   internally already maintains this information.
 
-From time to time patches are sent to the lkml to support ru_maxrss.
-AFAIK, until now nothing got applied.
+   Since you can use dtrace to look into kernel structs whose
+   fields are not exposed by any provider, you can wuergaround this
+   limitation. But obviously, you need to be root for this.
 
-The last patch is discussed in
-http://thread.gmane.org/gmane.linux.kernel.mm/29880/focus=32531
-http://thread.gmane.org/gmane.linux.kernel.api/449
-
-
-Previous patches:
-http://thread.gmane.org/gmane.linux.kernel/582381
-http://thread.gmane.org/gmane.linux.kernel/568053
-
+   Even when some dtrace provider is extended in the future,
+   another problem with dtrace is that under a default Solaris 10
+   installation a normal user is not allowed to use dtrace (for his
+   own processes). The admin has to give your account extra
+   privileges for this.  Depending on your favourite Solaris admin,
+   this may not be an option, since it is feared that malicious
+   users would trace every instruction and things like that.
+   Obviously, such arguments does not catch. For example malicious
+   users already are able to truss every program they start or fork
+   bomb the system.
 
 
 Compile hints:
