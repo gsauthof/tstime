@@ -22,4 +22,10 @@ void gen_cpumask(char *cpumask, size_t len);
     exit(23); \
   }
 
+#define LOG(stream, fmt, arg...) { \
+  if (!tab_out) { \
+    fprintf(stream, fmt, ##arg); \
+  } \
+}
+
 #endif

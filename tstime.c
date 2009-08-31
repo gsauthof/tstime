@@ -15,8 +15,23 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 
+#include <inttypes.h>
+#include <sys/socket.h>
+#include <linux/genetlink.h>
+#include <linux/taskstats.h>
+
 
 static char message[1024];
+
+static int tab_out = 0;
+
+int print_tab_time_mem(struct taskstats *t)
+{
+  snprintf(message, 1024,
+      "%" PRIu64 ";%" PRIu64 ";%" PRIu64 ";%" PRIu64 ";%" PRIu64 ";\n",
+      t->ac_etime, t->ac_utime, t->ac_stime, t->hiwater_rss, t->hiwater_vm);
+  return 0;
+}
 
 int print_time_mem(struct taskstats *t)
 {
@@ -38,20 +53,20 @@ void install_chld_handler()
 
 int wait_for_child(pid_t pid)
 {
-  fprintf(stderr, "\n");
+  LOG(stderr, "\n");
   int code = 42;
   int status;
   pid_t r = waitpid(pid, &status, 0); CHECK_ERR(r);
   if (WIFEXITED(status)) {
-    fprintf(stderr, "Exit status: %d\t", WEXITSTATUS(status));
+    LOG(stderr, "Exit status: %d\t", WEXITSTATUS(status));
     code = WEXITSTATUS(status);
   }
   if (WIFSIGNALED(status))
-    fprintf(stderr, "Signal: %d\t", WTERMSIG(status));
+    LOG(stderr, "Signal: %d\t", WTERMSIG(status));
   // _BSD_SOURCE
   //if (WCOREDUMP(status))
   //  fprintf(stderr, "coredumped");
-  fprintf(stderr, "\n");
+  LOG(stderr, "\n");
   return code;
 }
 
@@ -74,6 +89,10 @@ int main(int argc, char **argv)
   if (!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help")) {
     help(argv[0]);
     return 0;
+  }
+  if (!strcmp(argv[1], "-t")) {
+    tab_out = 1;
+    ++argv;
   }
   int start_arg = 1;
   dbg = 0;
@@ -99,7 +118,11 @@ int main(int argc, char **argv)
   //pause();
   //r = ts_set_pid(&t, pid); CHECK_ERR(r);
 
-  r = ts_wait(&t, pid, print_time_mem); CHECK_ERR(r);
+  if (tab_out) {
+    r = ts_wait(&t, pid, print_tab_time_mem); CHECK_ERR(r);
+  } else {
+    r = ts_wait(&t, pid, print_time_mem); CHECK_ERR(r);
+  }
   //r = ts_wait(&t, 0, print_time_mem); CHECK_ERR(r);
 
   r = wait_for_child(pid);
