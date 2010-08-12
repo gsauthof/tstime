@@ -20,6 +20,7 @@
 #include <linux/genetlink.h>
 #include <linux/taskstats.h>
 
+#include <sys/prctl.h>
 
 static char message[1024];
 
@@ -112,9 +113,10 @@ int main(int argc, char **argv)
 
   pid_t pid = fork(); CHECK_ERR(pid);
   if (!pid) {
-    execvp(argv[start_arg], argv+start_arg);
-    perror("execvp failed");
-    return 23;
+    int r = prctl(PR_SET_PDEATHSIG, SIGTERM, 0, 0, 0);
+    CHECK_ERR(r);
+    r = execvp(argv[start_arg], argv+start_arg);
+    CHECK_ERR(r);
   }
   //pause();
   //r = ts_set_pid(&t, pid); CHECK_ERR(r);
