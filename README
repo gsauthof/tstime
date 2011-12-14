@@ -1,4 +1,18 @@
-I appreciate feedback and comments (specially about changing APIs which are
+-----------------------------------------------------------------------
+Note (2011-12-14)
+-----------------------------------------------------------------------
+
+The taskstats-API (which tstime uses) does not work with non-root user
+permission under >= 3.0.0 kernels.
+
+tstime still works called as root, though.
+
+See http://www.openwall.com/lists/kernel-hardening/2011/09/19/9
+for a related discussion about the current state of the taskstats API.
+
+-----------------------------------------------------------------------
+
+I appreciate feedback and comments (especially about changing APIs which are
 related to the programs and Solaris-specific APIs):
 
 gsauthof@techfak.uni-bielefeld.de
