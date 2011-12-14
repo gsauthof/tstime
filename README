@@ -2,8 +2,8 @@
 Note (2011-12-14)
 -----------------------------------------------------------------------
 
-The taskstats-API (which tstime uses) does not work with non-root user
-permission under >= 3.0.0 kernels.
+The taskstats API (which tstime uses) does not work anymore with
+non-root user permissions under >= 3.0.0 kernels.
 
 tstime still works called as root, though.
 
@@ -62,7 +62,7 @@ There are different approaches to solve this problem:
    polling. The old tool 'memtime' does this. Of course, this approach is ultra
    ugly and not suitable for short running processes.
 
-3. Use the taskstat delay accounting API from the Linux 2.6 Kernel.
+3. Use the taskstats delay accounting API from the Linux 2.6 Kernel.
    For tsmon this is a perfect fit. But to get the taskstats information
    of a single exiting process there is a bit overhead involved:
    you have to retrieve the exit information of all exiting processes
@@ -71,7 +71,7 @@ There are different approaches to solve this problem:
    see tstime.c for details
 
    I tried to wait for a sig-child and than use the child-pid to get
-   the accounting information via the taskstat api, which didn't work. At
+   the accounting information via the taskstats api, which didn't work. At
    this point the information of the child is already gone.
 
    nl.c contains a try to use libnl for communicating with the taskstats
@@ -104,21 +104,21 @@ There are different approaches to solve this problem:
 
 Compile hints:
 
-- Since the taskstat API of the linux kernel is used you obviously need to
+- Since the taskstats API of the Linux kernel is used you obviously need to
   have the kernel headers available.
 
   Under a debian-style distribution they are included in the package
   'linux-libc-dev'
 
-- Under current distributions (e.g. debian style) the default kernel is
-  configured to provide the taskstat interface.
+- Under current distributions (e.g. Debian style) the default kernel is
+  configured to provide the taskstats interface.
 
   If you get errors like 'Error getting family id, errno 0', your kernel
-  probably is not configured for taskstat.
+  probably is not configured for taskstats.
 
   To check your kernel config type something like this:
 
-$ grep -i taskstat /boot/config-2.6.*-*-generic 
+$ grep -i taskstat /boot/config-2.*-*-generic 
 /boot/config-2.6.27-11-generic:CONFIG_TASKSTATS=y
 
 
