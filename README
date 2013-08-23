@@ -12,10 +12,19 @@ for a related discussion about the current state of the taskstats API.
 
 -----------------------------------------------------------------------
 
+-----------------------------------------------------------------------
+Note (2013-08-23)
+-----------------------------------------------------------------------
+
+See https://github.com/gsauthof/cgmemtime for a highwater memory
+meassurement approach using cgroups and an overview of related tools.
+
+-----------------------------------------------------------------------
+
 I appreciate feedback and comments (especially about changing APIs which are
 related to the programs and Solaris-specific APIs):
 
-gsauthof@techfak.uni-bielefeld.de
+mail@georg.so
 gsauthof@sdf.lonestar.org
 
 License of the source code is the GPL version 2 or later.
