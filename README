@@ -21,11 +21,24 @@ meassurement approach using cgroups and an overview of related tools.
 
 -----------------------------------------------------------------------
 
+-----------------------------------------------------------------------
+Note (2020-09-05)
+-----------------------------------------------------------------------
+
+Since Bitbucket (originally the Mercurial-only Github equivalent)
+terminated their Mercurial support and recently purged all
+existing Mercurial repositories I converted my local copy of
+https://bitbucket.org/gsauthof/tstime into a Git repository and
+pushed it to https://github.com/gsauthof/tstime.
+
+While at it I even updated the Solaris notes.
+
+-----------------------------------------------------------------------
+
 I appreciate feedback and comments (especially about changing APIs which are
 related to the programs and Solaris-specific APIs):
 
 mail@georg.so
-gsauthof@sdf.lonestar.org
 
 License of the source code is the GPL version 2 or later.
 If you don't received the license text go to: http://www.gnu.org/licenses/
@@ -106,9 +119,15 @@ There are different approaches to solve this problem:
    privileges for this.  Depending on your favourite Solaris admin,
    this may not be an option, since it is feared that malicious
    users would trace every instruction and things like that.
-   Obviously, such arguments does not catch. For example malicious
+   Obviously, such arguments do not catch. For example, malicious
    users already are able to truss every program they start or fork
    bomb the system.
+
+   **Update (2020-09):** That being said, some time ago I wrote
+   dtmemtime (https://github.com/gsauthof/utility#dtmemtime)
+   for Solaris 10 which uses the dtrace proc and syscall
+   providers for measuring the highwater memory usage of
+   processes. Thus, it 'just' requires normal dtrace user privileges.
 
 
 Compile hints:
