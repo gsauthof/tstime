@@ -71,14 +71,12 @@ int wait_for_child(pid_t pid)
   return code;
 }
 
-void help(char *s)
+void help(const char *s)
 {
-  printf("%s options* COMMAND OPTIONS*\n\n"
+  printf("options* COMMAND OPTIONS*\n\n"
       "\texecutes COMMAND and prints its runtime and highwater mem usage\n\n"
       "\t-t\t;-delim output\n\n"
-      "(uses the taskstat delay accounting API of the Linux Kernel 2.6)\n\n"
-      "Version: %s\n",
-      s, rcsid);
+      "(uses the taskstat delay accounting API of the Linux Kernel 2.6)\n\n"); 
 }
 
 int main(int argc, char **argv)
