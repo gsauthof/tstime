@@ -152,7 +152,8 @@ static int get_family_id(int sd)
 		char buf[256];
 	} ans;
 
-	int id = 0, rc;
+	int id = 0;
+	int __attribute__((unused)) rc;
 	struct nlattr *na;
 	int rep_len;
 

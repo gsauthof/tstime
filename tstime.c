@@ -29,7 +29,7 @@ static int tab_out = 0;
 int print_tab_time_mem(struct taskstats *t)
 {
   snprintf(message, 1024,
-      "%" PRIu64 ";%" PRIu64 ";%" PRIu64 ";%" PRIu64 ";%" PRIu64 ";\n",
+	"%llu" ";%llu" ";%llu" ";%llu" ";%llu" ";\n",
       t->ac_etime, t->ac_utime, t->ac_stime, t->hiwater_rss, t->hiwater_vm);
   return 0;
 }
