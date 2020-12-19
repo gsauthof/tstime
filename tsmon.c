@@ -23,14 +23,12 @@ int print_time_mem(struct taskstats *t)
   return 1;
 }
 
-void help(char *s)
+void help(const char *s)
 {
   printf("%s\n\n"
       "\tprints taskstats (time, mem) of exiting processes/threads"
       " on the system\n\n"
-      "(uses the taskstat delay accounting API of the Linux Kernel 2.6)\n\n"
-      "Version: %s\n",
-      s, rcsid);
+      "(uses the taskstat delay accounting API of the Linux Kernel 2.6)\n\n", s);
 }
 
 int main(int argc, char **argv)

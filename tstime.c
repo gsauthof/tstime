@@ -15,7 +15,6 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 
-#include <inttypes.h>
 #include <sys/socket.h>
 #include <linux/genetlink.h>
 #include <linux/taskstats.h>
@@ -29,7 +28,7 @@ static int tab_out = 0;
 int print_tab_time_mem(struct taskstats *t)
 {
   snprintf(message, 1024,
-      "%" PRIu64 ";%" PRIu64 ";%" PRIu64 ";%" PRIu64 ";%" PRIu64 ";\n",
+      "%llu;%llu;%llu;%llu;%llu;\n",
       t->ac_etime, t->ac_utime, t->ac_stime, t->hiwater_rss, t->hiwater_vm);
   return 0;
 }
@@ -76,9 +75,7 @@ void help(char *s)
   printf("%s options* COMMAND OPTIONS*\n\n"
       "\texecutes COMMAND and prints its runtime and highwater mem usage\n\n"
       "\t-t\t;-delim output\n\n"
-      "(uses the taskstat delay accounting API of the Linux Kernel 2.6)\n\n"
-      "Version: %s\n",
-      s, rcsid);
+      "(uses the taskstat delay accounting API of the Linux Kernel 2.6)\n\n", s);
 }
 
 int main(int argc, char **argv)

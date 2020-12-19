@@ -153,6 +153,7 @@ static int get_family_id(int sd)
 	} ans;
 
 	int id = 0, rc;
+        (void)rc;
 	struct nlattr *na;
 	int rep_len;
 
